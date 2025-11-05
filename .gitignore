@@ -1,0 +1,236 @@
+# === Python / Virtual Environments ===
+
+# special type
+safe_toolchain*.jso*
+*_progress.json
+*_all_code_dump_*.*
+bot_platform_all_code_dump_*.*
+
+# typical venv folders
+venv/
+.venv/
+myenv/
+__pypackages__/
+
+# python env files
+.env
+.env.*
+.env.local
+.env.test
+local.settings.json
+.envrc
+
+# pyenv / pyproject
+*.pyenv
+.python-version
+.tool-versions
+
+# bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# pip/build metadata
+pip-wheel-metadata/
+*.egg-info/
+*.egg
+build/
+dist/
+
+# installers / wheels
+*.whl
+*.tar.gz
+*.zip
+
+# === Dependencies / Node / JS caches ===
+node_modules/
+.pnpm-store/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.turbo/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Secrets / keys / cloud creds (DO NOT COMMIT) ===
+# env and credential files
+secrets.json
+credentials
+credentials.json
+.netrc
+*.secret
+*.key
+*.pem
+*.crt
+*.der
+*.p12
+private.key
+keys.json
+token.json
+
+# cloud provider
+.aws/
+.gcloud/
+.azure/
+.kube/
+kubeconfig
+kube_config
+.docker/config.json
+.vault/
+.ssh/
+.ssh/id_*
+.gnupg/
+
+# CI / local tooling caches that may contain tokens
+*.kdbx
+
+# === Logs / temp files / DB ===
+*.log
+*.log.*
+*.tmp
+*.bak
+*.swp
+*.sqlite
+*.db
+*.sqlite3
+*.sqlite3-journal
+coverage/
+coverage.xml
+*.lcov
+
+# === Test / coverage / caches ===
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# === Notebooks ===
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+jupyter_runtime/
+runtime/
+.nbgrader/
+
+# === Editors / OS files ===
+.vscode/
+.idea/
+.ropeproject/
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.Spotlight-V100
+.Trashes
+desktop.ini
+
+# === IDE / workspace specific files ===
+*.sublime-project
+*.sublime-workspace
+
+# === Infrastructure / containers / terraform ===
+.docker/
+docker-compose.override.yml
+.docker/
+*.tar
+.dockerignore
+.vagrant/
+.serverless/
+.terraform/
+*.tfstate*
+*.tfstate.backup
+
+# Docker image tarballs and docker client config
+*.tar
+.docker/config.json
+
+# === Binaries / compiled objects ===
+*.exe
+*.dll
+*.so
+*.dylib
+*.o
+*.obj
+*.class
+*.jar
+*.war
+*.ear
+
+# Python extension builds
+build/
+build/lib*/
+*.so
+
+# === Machine learning / model files / large data ===
+models/
+models/*.bin
+*.ckpt
+*.pth
+*.pt
+*.h5
+*.safetensors
+*.onnx
+*.pb
+*.hdf5
+
+# datasets / data outputs
+data/
+datasets/
+raw_data/
+processed_data/
+output/
+results/
+archive/
+*.csv
+*.tsv
+
+# media / user content
+*.mp3
+*.wav
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.iso
+*.bin
+
+# === Misc / backups / installers ===
+*~
+.#*
+*.swp
+*.msi
+*.7z
+*.gz
+
+# === Composer / PHP / vendor ===
+vendor/
+composer.phar
+
+# === Password/key stores / OS keychain ===
+.password-store/
+.keychain/
+.kwallet/
+
+# === Misc local config / tooling ===
+.npmrc
+.yarnrc
+.pypirc
+
+# === Logs rotated/compressed ===
+*.log.*
+*.gz
+
+# === CI / workflows local overrides ===
+.circleci/
+.github/workflows/*.local.yml
+
+# === Optional: Lockfiles (keep for reproducibility unless you explicitly decide otherwise) ===
+# package-lock.json
+# yarn.lock
+# Pipfile.lock
+# poetry.lock
