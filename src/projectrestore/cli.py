@@ -111,6 +111,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--dry-run", action="store_true", help="Validate archive without writing files"
     )
+    p.add_argument(
+        "--version", action="version", version=f"%(prog)s 1.0.0", help="Show program's version number and exit"
+    )
     return p.parse_args()
 
 
