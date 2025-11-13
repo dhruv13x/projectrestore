@@ -75,5 +75,19 @@ python_version = "3.11"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-addopts = ["-ra", "-v", "--tb=short"]
+pythonpath = "src"
+timeout = 10
 testpaths = ["tests"]
+addopts = [
+  "-ra",
+  "--strict-config",
+  "--strict-markers",
+  "--tb=short",
+  "--cov",
+  "--cov-report=term-missing",
+  "--cov-report=html",
+  "--cov-report=term-missing:skip-covered",
+    "--cov-fail-under=90",
+]
+log_cli = true
+log_cli_level = "INFO"

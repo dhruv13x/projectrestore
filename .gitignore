@@ -4,6 +4,7 @@
 safe_toolchain*.jso*
 *_progress.json
 *_all_code_dump_*.*
+*_all_create_dump_*.*
 bot_platform_all_code_dump_*.*
 
 # typical venv folders
