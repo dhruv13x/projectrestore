@@ -2,12 +2,11 @@
 requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.dynamic]
-version = {attr = "projectrestore.__version__"}
+
 
 [project]
 name = "projectrestore"
-dynamic = ["version"]
+version = "1.0.0"
 description = "Safely extract and restore project snapshots created by projectclone — secure, atomic, integrity-checked restore engine."
 readme = "README.md"
 requires-python = ">=3.8"
