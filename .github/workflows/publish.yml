@@ -1,50 +1,64 @@
-name: Publish to PyPI
+name: 🚀 Publish to PyPI (Trusted Publishing)
 
 on:
   push:
     tags:
-      - 'v*.*.*'  # Publish only on version tags
+      - "v*.*.*"  # Trigger only on semantic version tags (e.g., v1.2.3)
 
 permissions:
   contents: read
-  id-token: write  # For PyPI Trusted Publishing (OIDC)
+  id-token: write  # Required for PyPI OIDC Trusted Publishing
 
 jobs:
-  build-publish:
-    name: Build & Publish projectrestore
+  build-and-publish:
+    name: Build & Publish
     runs-on: ubuntu-latest
-    environment: pypi  # Must match PyPI trusted settings if used
+    environment: pypi # Assumes a GitHub environment named 'pypi' is configured
 
     steps:
-      - name: 🧩 Checkout source
+      - name: 🧩 Checkout code
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python
+      - name: 🐍 Set up Python 3.13
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.13"
 
-      - name: ⚙️ Install build tools
+      - name: 📦 Install build, test, and dev tools
         run: |
           python -m pip install --upgrade pip
+          # Install core build tools
           pip install build twine
+          # Install project-specific development dependencies
+          # This assumes 'dev' extra is defined in pyproject.toml and includes
+          # pytest, pytest-cov, ruff, black, mypy, etc.
+          pip install .[dev]
+          # Install codecov-action dependency if not already in [dev]
+          pip install codecov
 
-      - name: 🏗️ Build distribution
+      - name: 🧪 Run tests & generate coverage
+        # This command assumes pytest is used and the main package code is in 'src'.
+        # If a project's main package is named differently (e.g., 'src/my_tool_name'),
+        # '--cov=src' should still work if the package is directly under 'src'.
+        run: pytest --cov=src --cov-report=xml
+
+      - name: 📊 Upload coverage reports to Codecov
+        # Requires a CODECOV_TOKEN secret to be configured in the repository settings.
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.xml
+          verbose: true
+          fail_ci_if_error: true
+
+      - name: ⚙️ Build distribution packages
         run: python -m build
 
-      - name: 🔍 Verify package metadata
+      - name: ✅ Verify distribution
         run: twine check dist/*
 
-      - name: 🧠 Cache pip dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: 🚀 Publish to PyPI via OIDC
+      - name: 🚀 Publish to PyPI (via OIDC)
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           verbose: true
-          skip-existing: true
+          skip-existing: false  # Fail if version already exists (prevents accidental overwrites)
