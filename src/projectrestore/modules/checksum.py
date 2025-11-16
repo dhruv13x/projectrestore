@@ -1,3 +1,5 @@
+# src/projectrestore/modules/checksum.py
+
 from __future__ import annotations
 import hashlib
 import logging

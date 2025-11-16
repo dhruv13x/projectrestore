@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# src/projectrestore/cli.py
+
 """
 extract_backup.py
 
@@ -36,6 +38,7 @@ from projectrestore.modules.extraction import safe_extract_atomic
 from projectrestore.modules.locking import create_pid_lock, release_pid_lock
 from projectrestore.modules.signals import GracefulShutdown
 from projectrestore.modules.utils import count_files, find_latest_backup
+from .banner import print_logo
 
 
 LOG = logging.getLogger("extract_backup")
@@ -118,6 +121,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    print_logo()
     args = parse_args()
     setup_logging(logging.DEBUG if args.debug else logging.INFO)
 

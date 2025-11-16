@@ -1,3 +1,5 @@
+# tests/modules/test_checksum.py
+
 import shutil
 import tempfile
 import unittest

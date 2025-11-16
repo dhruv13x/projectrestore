@@ -1,3 +1,5 @@
+# tests/modules/test_signals.py
+
 import unittest
 from unittest.mock import MagicMock, patch
 from projectrestore.modules import signals
