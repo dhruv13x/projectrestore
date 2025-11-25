@@ -73,32 +73,64 @@ pip install -e .
 
 
 ---
-
 🚀 Quick Start
 
-Restore the latest backup made by projectclone:
-
+### 1. Restore the Latest Backup
+Finds the newest `.tar.gz` in the default directory and restores it.
+```sh
 projectrestore
+```
 
-Restore to a specific directory:
+### 2. Restore to a Specific Directory
+```sh
+projectrestore --backup-dir ~/project_backups --extract-dir ./my_restored_project
+```
 
-projectrestore --backup-dir ~/project_backups --extract-dir ./restored_project
-
-Dry-run (validate only):
-
+### 3. Dry-Run Validation
+Verify an archive's integrity without writing any files.
+```sh
 projectrestore --dry-run
+```
 
-Verify SHA-256 before restore:
-
+### 4. Restore with SHA-256 Verification
+Ensure the backup hasn't been corrupted or tampered with.
+```sh
 projectrestore --checksum checksums.txt
+```
 
-Limit archive extraction:
+### 5. Tarbomb-Protected Restore
+Set limits to prevent malicious archives from filling up your disk.
+```sh
+projectrestore --max-files 10000 --max-bytes 1G
+```
 
-projectrestore --max-files 50000 --max-bytes 2G
-
-Debug logs:
-
+### 6. Debug Mode
+For verbose output during troubleshooting.
+```sh
 projectrestore --debug
+```
+
+---
+
+## ⚙️ Configuration & Advanced Usage
+
+Customize behavior with these command-line arguments.
+
+| Argument | Short | Default | Description |
+|---|---|---|---|
+| `--backup-dir` | `-b` | `/sdcard/project_backups` | Directory containing backups. |
+| `--extract-dir`| `-e` | `BACKUP_DIR/tmp_extract` | Extraction target directory. |
+| `--pattern` | `-p` | `*-bot_platform-*.tar.gz` | Glob pattern to match backups. |
+| `--lockfile` | `-l` | `/tmp/extract_backup.pid` | PID file for locking. |
+| `--checksum` | `-c` | `None` | Optional SHA-256 checksum file. |
+| `--stale-seconds`| | `3600` | Seconds before a lock is stale. |
+| `--debug` | | `False` | Enable debug logging. |
+| `--max-files` | | `None` | Max files to extract (tarbomb protection). |
+| `--max-bytes` | | `None` | Max bytes to extract (tarbomb protection). |
+| `--allow-pax` | | `False` | Allow pax/global headers (skipped by default). |
+| `--allow-sparse`| | `False` | Allow GNU sparse members (disabled by default). |
+| `--dry-run` | | `False` | Validate archive without writing files. |
+| `--version` | | | Show version and exit. |
 
 
 ---
@@ -194,6 +226,25 @@ Docker	✅
 macOS	⚠️ tar behavior varies — full support in v1.0
 
 
+
+---
+
+🏗️ Architecture
+
+```
+src/projectrestore/
+├── cli.py          # Main entry point, CLI argument parsing
+├── banner.py       # ASCII art
+└── modules/
+    ├── __init__.py
+    ├── checksum.py   # SHA-256 verification logic
+    ├── extraction.py # Core extraction and safety checks
+    ├── locking.py    # PID-based locking
+    ├── signals.py    # Graceful shutdown handling
+    └── utils.py      # Helper functions
+```
+
+The tool is organized into a `cli.py` entrypoint that handles user input and a `modules` directory containing specialized components for each core function, promoting separation of concerns.
 
 ---
 
