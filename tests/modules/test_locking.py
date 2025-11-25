@@ -70,6 +70,75 @@ class TestLocking(unittest.TestCase):
             locking.create_pid_lock(self.lockfile)
         self.assertEqual(cm.exception.code, 3)
 
+    @patch("os.kill", side_effect=PermissionError)
+    def test_is_process_alive_permission_error(self, mock_kill):
+        self.assertTrue(locking._is_process_alive(123))
+
+    @patch("os.kill", side_effect=Exception)
+    def test_is_process_alive_generic_exception(self, mock_kill):
+        self.assertTrue(locking._is_process_alive(123))
+
+    @patch("os.kill", side_effect=ProcessLookupError)
+    def test_is_process_alive_process_lookup_error(self, mock_kill):
+        self.assertFalse(locking._is_process_alive(123))
+
+    @patch("projectrestore.modules.locking._is_process_alive", return_value=False)
+    @patch("os.stat")
+    @patch("os.open", side_effect=FileExistsError)
+    @patch.object(locking.LOG, "error")
+    def test_stale_lock_reacquire_fail(
+        self, mock_log, mock_open, mock_stat, mock_alive
+    ):
+        self.lockfile.write_text("12345")
+        old_mtime = time.time() - 4000
+        mock_stat.return_value = os.stat_result(
+            (stat.S_IFREG | 0o644, 0, 0, 0, 0, 0, 0, 0, old_mtime, 0)
+        )
+        with self.assertRaises(SystemExit):
+            locking.create_pid_lock(self.lockfile)
+        mock_log.assert_called_with(
+            "Failed to acquire lockfile after removing stale one. Exiting."
+        )
+
+    def test_release_lock_empty(self):
+        self.lockfile.touch()
+        locking.release_pid_lock(self.lockfile)
+        self.assertFalse(self.lockfile.exists())
+
+    @patch(
+        "pathlib.Path.read_text", side_effect=OSError("Cannot read file")
+    )  # Simulate read error
+    def test_release_lock_read_fail(self, mock_read_text):
+        self.lockfile.write_text(str(os.getpid()))  # Ensure file exists before mocking
+        with patch.object(locking.LOG, "debug") as mock_log:
+            locking.release_pid_lock(self.lockfile)
+            mock_log.assert_called_with(
+                "Failed to release lock file %s (non-fatal)", self.lockfile
+            )
+
+    @patch("os.stat")
+    @patch("os.unlink", side_effect=OSError("unlink fail"))
+    def test_unreadable_stale_remove_fail(self, mock_unlink, mock_stat):
+        self.lockfile.write_text("garbage")
+        mock_stat.return_value = os.stat_result(
+            (0, 0, 0, 0, 0, 0, 0, 0, time.time() - 4000, 0)
+        )
+
+        with self.assertRaises(SystemExit) as cm:
+            locking.create_pid_lock(self.lockfile, stale_seconds=3600)
+        self.assertEqual(cm.exception.code, 3)
+
+    @patch("os.stat")
+    def test_unreadable_stale_but_recent(self, mock_stat):
+        self.lockfile.write_text("garbage")
+        mock_stat.return_value = os.stat_result(
+            (0, 0, 0, 0, 0, 0, 0, 0, time.time() - 1000, 0)
+        )
+
+        with self.assertRaises(SystemExit) as cm:
+            locking.create_pid_lock(self.lockfile, stale_seconds=3600)
+        self.assertEqual(cm.exception.code, 3)
+
     def test_release_not_owned(self):
         self.lockfile.write_text("99999")
         locking.release_pid_lock(self.lockfile)

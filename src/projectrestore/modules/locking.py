@@ -23,7 +23,10 @@ def _is_process_alive(pid: int) -> bool:
 
 def create_pid_lock(lockfile: Path, stale_seconds: int = 3600) -> None:
     pid_str = str(os.getpid())
-    lockfile.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        lockfile.parent.mkdir(parents=True, exist_ok=True)
+    except FileExistsError:
+        pass  # Race condition: another process created the directory
     try:
         fd = os.open(str(lockfile), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         with os.fdopen(fd, "w") as fh:
@@ -115,7 +118,7 @@ def release_pid_lock(lockfile: Path) -> None:
     try:
         if lockfile.exists():
             content = lockfile.read_text().strip()
-            if content.splitlines()[0] == str(os.getpid()) or not content:
+            if not content or content.splitlines()[0] == str(os.getpid()):
                 lockfile.unlink()
                 LOG.debug("Released lock file %s", lockfile)
             else:
