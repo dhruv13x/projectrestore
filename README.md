@@ -261,17 +261,9 @@ These tools form a reproducible project state suite.
 
 ---
 
-📦 Future Roadmap
+🗺️ Roadmap
 
-Interactive restore preview (file diff, size, changeset)
-
-Restore-to-new-path mode
-
-Encrypted backup support
-
-Signature verification (public key)
-
-macOS hardened extractor extension
+For a detailed view of our future plans, please see our official [ROADMAP.md](ROADMAP.md).
 
 
 
