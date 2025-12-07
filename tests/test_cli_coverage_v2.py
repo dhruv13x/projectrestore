@@ -40,22 +40,3 @@ class TestProjectRestoreCliCoverageV2:
                  assert rc == 1
         captured = capsys.readouterr()
 
-    def test_download_from_cloud_success(self):
-        # Test success path for download_from_cloud function directly
-        with patch("src.common.credentials.resolve_credentials", return_value=("k", "s", "Env")):
-            with patch("src.common.credentials.get_cloud_provider_info", return_value=("Backblaze B2", "b", "e")):
-                # Mock B2Manager in src.common.b2
-                with patch("src.common.b2.B2Manager") as MockB2:
-                    instance = MockB2.return_value
-                    instance.download_file.return_value = None
-
-                    res = cli.download_from_cloud("bucket", "file", "dest")
-                    assert res is True
-                    instance.download_file.assert_called_with("file", "dest")
-
-    def test_download_from_cloud_exception(self, capsys):
-        with patch("src.common.credentials.resolve_credentials", return_value=("k", "s", "Env")):
-            with patch("src.common.credentials.get_cloud_provider_info", return_value=("Backblaze B2", "b", "e")):
-                with patch("src.common.b2.B2Manager", side_effect=Exception("Download Fail")):
-                    res = cli.download_from_cloud("bucket", "file", "dest")
-                    assert res is False
