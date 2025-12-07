@@ -1,0 +1,91 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+
+
+[project]
+name = "projectrestore"
+version = "4.0.1"
+description = "Safely extract and restore project snapshots created by projectclone — secure, atomic, integrity-checked restore engine."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+
+authors = [
+  { name = "Dhruv", email = "dhruv13x@gmail.com" }
+]
+
+maintainers = [
+  { name = "Dhruv", email = "dhruv13x@gmail.com" }
+]
+
+keywords = [
+  "restore",
+  "backup-restore",
+  "snapshot",
+  "archive-extract",
+  "projectclone",
+  "reproducibility",
+  "developer-tools",
+  "atomic-restore",
+  "safe-restore"
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Topic :: System :: Archiving",
+  "Topic :: System :: Recovery Tools",
+  "Topic :: Utilities",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only"
+]
+
+dependencies = [
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=5.0",
+  "black>=24.0",
+  "mypy>=1.10",
+  "ruff>=0.4.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/dhruv13x/projectrestore"
+Repository = "https://github.com/dhruv13x/projectrestore.git"
+Issues = "https://github.com/dhruv13x/projectrestore/issues"
+
+[project.scripts]
+projectrestore = "projectrestore.cli:main"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+timeout = 10
+testpaths = ["tests"]
+addopts = [
+  "-ra",
+  "--strict-config",
+  "--strict-markers",
+  "--tb=short",
+  "--cov=projectrestore",
+  "--cov-report=term-missing",
+  "--cov-report=html",
+  "--cov-report=term-missing:skip-covered",
+    "--cov-fail-under=85",
+]
+log_cli = true
+log_cli_level = "INFO"
