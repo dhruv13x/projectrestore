@@ -1,0 +1,59 @@
+name: 🚀 Publish to PyPI (Trusted Publishing)
+
+on:
+  push:
+    tags:
+      - "projectrestore-v*.*.*"
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-publish:
+    name: Build & Publish
+    runs-on: ubuntu-latest
+    environment: pypi
+    defaults:
+      run:
+        working-directory: ./projectrestore
+
+    steps:
+      - name: 🧩 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: 📦 Install build, test, and dev tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+          pip install .[dev]
+          pip install codecov
+
+      - name: 🧪 Run tests & generate coverage
+        run: pytest --cov=projectrestore --cov-report=xml
+
+      - name: 📊 Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./projectrestore/coverage.xml
+          verbose: true
+          fail_ci_if_error: true
+
+      - name: ⚙️ Build distribution packages
+        run: python -m build
+
+      - name: ✅ Verify distribution
+        run: twine check dist/*
+
+      - name: 🚀 Publish to PyPI (via OIDC)
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages_dir: projectrestore/dist
+          verbose: true
+          skip-existing: false
